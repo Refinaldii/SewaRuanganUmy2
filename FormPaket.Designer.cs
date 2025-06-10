@@ -41,6 +41,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.dgvPaket = new System.Windows.Forms.DataGridView();
+            this.btnImportPaket = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPaket)).BeginInit();
             this.SuspendLayout();
@@ -80,7 +81,7 @@
             // 
             // BtnTambah
             // 
-            this.BtnTambah.Location = new System.Drawing.Point(648, 57);
+            this.BtnTambah.Location = new System.Drawing.Point(648, 16);
             this.BtnTambah.Name = "BtnTambah";
             this.BtnTambah.Size = new System.Drawing.Size(92, 42);
             this.BtnTambah.TabIndex = 4;
@@ -90,7 +91,7 @@
             // 
             // BtnUpdate
             // 
-            this.BtnUpdate.Location = new System.Drawing.Point(648, 118);
+            this.BtnUpdate.Location = new System.Drawing.Point(648, 64);
             this.BtnUpdate.Name = "BtnUpdate";
             this.BtnUpdate.Size = new System.Drawing.Size(92, 37);
             this.BtnUpdate.TabIndex = 5;
@@ -100,7 +101,7 @@
             // 
             // BtnDelete
             // 
-            this.BtnDelete.Location = new System.Drawing.Point(648, 169);
+            this.BtnDelete.Location = new System.Drawing.Point(648, 119);
             this.BtnDelete.Name = "BtnDelete";
             this.BtnDelete.Size = new System.Drawing.Size(92, 34);
             this.BtnDelete.TabIndex = 6;
@@ -110,7 +111,7 @@
             // 
             // BtnTutup
             // 
-            this.BtnTutup.Location = new System.Drawing.Point(648, 219);
+            this.BtnTutup.Location = new System.Drawing.Point(648, 169);
             this.BtnTutup.Name = "BtnTutup";
             this.BtnTutup.Size = new System.Drawing.Size(92, 34);
             this.BtnTutup.TabIndex = 7;
@@ -175,12 +176,24 @@
             this.dgvPaket.Size = new System.Drawing.Size(715, 156);
             this.dgvPaket.TabIndex = 9;
             this.dgvPaket.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPaket_CellClick);
+            this.dgvPaket.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPaket_CellContentClick);
+            // 
+            // btnImportPaket
+            // 
+            this.btnImportPaket.Location = new System.Drawing.Point(648, 219);
+            this.btnImportPaket.Name = "btnImportPaket";
+            this.btnImportPaket.Size = new System.Drawing.Size(92, 34);
+            this.btnImportPaket.TabIndex = 10;
+            this.btnImportPaket.Text = "Import Paket";
+            this.btnImportPaket.UseVisualStyleBackColor = true;
+            this.btnImportPaket.Click += new System.EventHandler(this.btnImportExcel_Click);
             // 
             // FormPaket
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnImportPaket);
             this.Controls.Add(this.dgvPaket);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.BtnTutup);
@@ -214,5 +227,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DataGridView dgvPaket;
+        private System.Windows.Forms.Button btnImportPaket;
     }
 }

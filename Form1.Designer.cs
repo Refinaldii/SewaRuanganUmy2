@@ -34,13 +34,15 @@
             this.txtRuangan = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.btnReport = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // BtnTambahPelanggan
             // 
-            this.BtnTambahPelanggan.Location = new System.Drawing.Point(512, 51);
+            this.BtnTambahPelanggan.Location = new System.Drawing.Point(371, 65);
             this.BtnTambahPelanggan.Name = "BtnTambahPelanggan";
-            this.BtnTambahPelanggan.Size = new System.Drawing.Size(94, 40);
+            this.BtnTambahPelanggan.Size = new System.Drawing.Size(91, 47);
             this.BtnTambahPelanggan.TabIndex = 0;
             this.BtnTambahPelanggan.Text = "Pelanggan ";
             this.BtnTambahPelanggan.UseVisualStyleBackColor = true;
@@ -48,7 +50,7 @@
             // 
             // BtnPaket
             // 
-            this.BtnPaket.Location = new System.Drawing.Point(86, 141);
+            this.BtnPaket.Location = new System.Drawing.Point(221, 65);
             this.BtnPaket.Name = "BtnPaket";
             this.BtnPaket.Size = new System.Drawing.Size(94, 47);
             this.BtnPaket.TabIndex = 1;
@@ -68,7 +70,7 @@
             // 
             // txtRuangan
             // 
-            this.txtRuangan.Location = new System.Drawing.Point(86, 51);
+            this.txtRuangan.Location = new System.Drawing.Point(86, 65);
             this.txtRuangan.Name = "txtRuangan";
             this.txtRuangan.Size = new System.Drawing.Size(94, 45);
             this.txtRuangan.TabIndex = 3;
@@ -78,9 +80,9 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(512, 123);
+            this.button1.Location = new System.Drawing.Point(518, 65);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(94, 40);
+            this.button1.Size = new System.Drawing.Size(82, 47);
             this.button1.TabIndex = 4;
             this.button1.Text = "Reservasi";
             this.button1.UseVisualStyleBackColor = true;
@@ -88,19 +90,41 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(512, 197);
+            this.button2.Location = new System.Drawing.Point(631, 65);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(94, 40);
+            this.button2.Size = new System.Drawing.Size(97, 47);
             this.button2.TabIndex = 5;
             this.button2.Text = "Pembayaran";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.BtnPembayaran_Click);
             // 
+            // label1
+            // 
+            this.label1.Location = new System.Drawing.Point(322, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(140, 26);
+            this.label1.TabIndex = 6;
+            this.label1.Text = " Sewa Ruangan Umy";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // btnReport
+            // 
+            this.btnReport.Location = new System.Drawing.Point(303, 182);
+            this.btnReport.Name = "btnReport";
+            this.btnReport.Size = new System.Drawing.Size(101, 52);
+            this.btnReport.TabIndex = 7;
+            this.btnReport.Text = "Report";
+            this.btnReport.UseVisualStyleBackColor = true;
+            this.btnReport.Click += new System.EventHandler(this.btnReport_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnReport);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.txtRuangan);
@@ -122,6 +146,8 @@
         private System.Windows.Forms.Button txtRuangan;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnReport;
     }
 }
 

@@ -31,32 +31,60 @@ namespace SewaRuanganUmy2
 
         private void BtnPelanggan_Click(object sender, EventArgs e)
         {
+            this.Hide(); // Sembunyikan form saat ini
             FormPelanggan formPelanggan = new FormPelanggan();
-            formPelanggan.ShowDialog();
+
+            // Saat FormPelanggan ditutup, tampilkan kembali form ini
+            formPelanggan.FormClosed += (s, args) => this.Show();
+
+            formPelanggan.Show();
         }
+
 
         private void BtnPaket_Click(object sender, EventArgs e)
         {
+            this.Hide();
             FormPaket formPaket = new FormPaket();
-            formPaket.ShowDialog(); // agar muncul sebagai form popup dan fokus
+            formPaket.FormClosed += (s, args) => this.Show();
+            formPaket.Show();
         }
 
-        private void BtnRuangan_Click(Object sender, EventArgs e)
+        private void BtnRuangan_Click(object sender, EventArgs e)
         {
+            this.Hide();
             FormRuangan formRuangan = new FormRuangan();
-            formRuangan.ShowDialog();
+            formRuangan.FormClosed += (s, args) => this.Show();
+            formRuangan.Show();
         }
 
-        private void BtnReservasi_Click(Object sender, EventArgs e)
+        private void BtnReservasi_Click(object sender, EventArgs e)
         {
-            FormReservasi formReservasi = new FormReservasi();
-            formReservasi.ShowDialog();
+            this.Hide();
+            FormReservasi formReservasi = new FormReservasi(this);
+            formReservasi.FormClosed += (s, args) => this.Show();
+            formReservasi.Show();
         }
 
-        private void BtnPembayaran_Click(Object sender, EventArgs e)
+        private void BtnPembayaran_Click(object sender, EventArgs e)
         {
-            FormPembayaran formPembayaran = new FormPembayaran();
-            formPembayaran.ShowDialog();
+            this.Hide();
+            FormPembayaran formPembayaran = new FormPembayaran(this);
+            formPembayaran.FormClosed += (s, args) => this.Show();
+            formPembayaran.Show();
         }
+
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnReport_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            Reportviewer reportviewer = new Reportviewer();
+            reportviewer.ShowDialog();
+        }
+
     }
 }

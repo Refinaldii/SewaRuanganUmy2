@@ -29,21 +29,21 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.cmbStatus = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.txtJumlah = new System.Windows.Forms.TextBox();
-            this.txtMetodePembayaran = new System.Windows.Forms.TextBox();
-            this.txtStatus = new System.Windows.Forms.TextBox();
-            this.txtTanggalPembayaran = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.cmbReservasi = new System.Windows.Forms.ComboBox();
+            this.cmbMetodePembayaran = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
             this.dgvPembayaran = new System.Windows.Forms.DataGridView();
-            this.txtIDReservasi = new System.Windows.Forms.TextBox();
+            this.dtpTanggalPembayaran = new System.Windows.Forms.DateTimePicker();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPembayaran)).BeginInit();
             this.SuspendLayout();
@@ -53,16 +53,16 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 27.43222F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 72.56778F));
+            this.tableLayoutPanel1.Controls.Add(this.cmbStatus, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.txtStatus, 1, 3);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.txtJumlah, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.txtMetodePembayaran, 1, 2);
-            this.tableLayoutPanel1.Controls.Add(this.txtTanggalPembayaran, 1, 4);
             this.tableLayoutPanel1.Controls.Add(this.label3, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.label4, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this.label5, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.txtIDReservasi, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.cmbReservasi, 1, 0);
+            this.tableLayoutPanel1.Controls.Add(this.cmbMetodePembayaran, 1, 2);
+            this.tableLayoutPanel1.Controls.Add(this.dtpTanggalPembayaran, 1, 4);
             this.tableLayoutPanel1.Location = new System.Drawing.Point(25, 29);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 5;
@@ -73,6 +73,23 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 47F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(584, 232);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // cmbStatus
+            // 
+            this.cmbStatus.FormattingEnabled = true;
+            this.cmbStatus.Location = new System.Drawing.Point(163, 136);
+            this.cmbStatus.Name = "cmbStatus";
+            this.cmbStatus.Size = new System.Drawing.Size(418, 24);
+            this.cmbStatus.TabIndex = 11;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(3, 36);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(50, 16);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Jumlah";
             // 
             // label1
             // 
@@ -90,39 +107,6 @@
             this.txtJumlah.Name = "txtJumlah";
             this.txtJumlah.Size = new System.Drawing.Size(418, 39);
             this.txtJumlah.TabIndex = 3;
-            // 
-            // txtMetodePembayaran
-            // 
-            this.txtMetodePembayaran.Location = new System.Drawing.Point(163, 84);
-            this.txtMetodePembayaran.Multiline = true;
-            this.txtMetodePembayaran.Name = "txtMetodePembayaran";
-            this.txtMetodePembayaran.Size = new System.Drawing.Size(418, 39);
-            this.txtMetodePembayaran.TabIndex = 4;
-            // 
-            // txtStatus
-            // 
-            this.txtStatus.Location = new System.Drawing.Point(163, 136);
-            this.txtStatus.Multiline = true;
-            this.txtStatus.Name = "txtStatus";
-            this.txtStatus.Size = new System.Drawing.Size(418, 39);
-            this.txtStatus.TabIndex = 4;
-            // 
-            // txtTanggalPembayaran
-            // 
-            this.txtTanggalPembayaran.Location = new System.Drawing.Point(163, 187);
-            this.txtTanggalPembayaran.Multiline = true;
-            this.txtTanggalPembayaran.Name = "txtTanggalPembayaran";
-            this.txtTanggalPembayaran.Size = new System.Drawing.Size(418, 39);
-            this.txtTanggalPembayaran.TabIndex = 5;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(3, 36);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(50, 16);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Jumlah";
             // 
             // label3
             // 
@@ -150,6 +134,22 @@
             this.label5.Size = new System.Drawing.Size(139, 16);
             this.label5.TabIndex = 8;
             this.label5.Text = "Tanggal Pembayaran";
+            // 
+            // cmbReservasi
+            // 
+            this.cmbReservasi.FormattingEnabled = true;
+            this.cmbReservasi.Location = new System.Drawing.Point(163, 3);
+            this.cmbReservasi.Name = "cmbReservasi";
+            this.cmbReservasi.Size = new System.Drawing.Size(418, 24);
+            this.cmbReservasi.TabIndex = 9;
+            // 
+            // cmbMetodePembayaran
+            // 
+            this.cmbMetodePembayaran.FormattingEnabled = true;
+            this.cmbMetodePembayaran.Location = new System.Drawing.Point(163, 84);
+            this.cmbMetodePembayaran.Name = "cmbMetodePembayaran";
+            this.cmbMetodePembayaran.Size = new System.Drawing.Size(418, 24);
+            this.cmbMetodePembayaran.TabIndex = 10;
             // 
             // button1
             // 
@@ -200,15 +200,14 @@
             this.dgvPembayaran.RowTemplate.Height = 24;
             this.dgvPembayaran.Size = new System.Drawing.Size(788, 170);
             this.dgvPembayaran.TabIndex = 5;
-            this.dgvPembayaran.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPembayaranCellClick);
+            this.dgvPembayaran.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPembayaran_CellClick);
             // 
-            // txtIDReservasi
+            // dtpTanggalPembayaran
             // 
-            this.txtIDReservasi.Location = new System.Drawing.Point(163, 3);
-            this.txtIDReservasi.Multiline = true;
-            this.txtIDReservasi.Name = "txtIDReservasi";
-            this.txtIDReservasi.Size = new System.Drawing.Size(418, 30);
-            this.txtIDReservasi.TabIndex = 9;
+            this.dtpTanggalPembayaran.Location = new System.Drawing.Point(163, 187);
+            this.dtpTanggalPembayaran.Name = "dtpTanggalPembayaran";
+            this.dtpTanggalPembayaran.Size = new System.Drawing.Size(418, 22);
+            this.dtpTanggalPembayaran.TabIndex = 12;
             // 
             // FormPembayaran
             // 
@@ -235,11 +234,8 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox txtStatus;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtJumlah;
-        private System.Windows.Forms.TextBox txtMetodePembayaran;
-        private System.Windows.Forms.TextBox txtTanggalPembayaran;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
@@ -248,6 +244,9 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.DataGridView dgvPembayaran;
-        private System.Windows.Forms.TextBox txtIDReservasi;
+        private System.Windows.Forms.ComboBox cmbReservasi;
+        private System.Windows.Forms.ComboBox cmbStatus;
+        private System.Windows.Forms.ComboBox cmbMetodePembayaran;
+        private System.Windows.Forms.DateTimePicker dtpTanggalPembayaran;
     }
 }

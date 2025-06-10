@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SewaRuanganUmy2
@@ -14,70 +8,12 @@ namespace SewaRuanganUmy2
     public partial class FormRuangan : Form
     {
         private string connectionString = "Data Source=YUUTA\\YUUTA;Initial Catalog=SewaRuanganUMY;Integrated Security=True";
+
         public FormRuangan()
         {
             InitializeComponent();
             LoadData();
         }
-
-        private void FormRuangan_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnTambah_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(txtNamaRuangan.Text) ||
-                string.IsNullOrWhiteSpace(txtKapasitas.Text) ||
-                string.IsNullOrWhiteSpace(txtLokasi.Text))
-            {
-                MessageBox.Show("Harap isi semua data ruangan!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Validasi kapasitas
-            int kapasitas;
-            if (!int.TryParse(txtKapasitas.Text.Trim(), out kapasitas) || kapasitas <= 0)
-            {
-                MessageBox.Show("Kapasitas tidak valid! Harus berupa angka dan lebih besar dari 0.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Menyimpan data ruangan ke database
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                try
-                {
-                    conn.Open();
-                    string query = "INSERT INTO Ruangan (nama_ruangan, kapasitas, lokasi ) VALUES (@Nama, @Kapasitas, @Lokasi)";
-
-                    // Menambahkan parameter untuk mencegah SQL Injection
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@Nama", txtNamaRuangan.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Kapasitas", kapasitas);
-                        cmd.Parameters.AddWithValue("@Lokasi", txtLokasi.Text.Trim());             
-
-                        int result = cmd.ExecuteNonQuery();
-                        if (result > 0)
-                        {
-                            MessageBox.Show("Data ruangan berhasil disimpan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            LoadData();  // Memastikan fungsi LoadData() ada untuk memperbarui tampilan data ruangan
-                        }
-                        else
-                        {
-                            MessageBox.Show("Data ruangan gagal disimpan.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Terjadi kesalahan saat menyimpan data ruangan: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-
 
         private void LoadData()
         {
@@ -86,8 +22,9 @@ namespace SewaRuanganUmy2
                 try
                 {
                     conn.Open();
-                    string query = "SELECT * FROM Ruangan";
-                    SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                    SqlDataAdapter da = new SqlDataAdapter("sp_GetAllRuangan", conn);
+                    da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
                     DataTable dt = new DataTable();
                     da.Fill(dt);
                     dgvRuangan.DataSource = dt;
@@ -107,48 +44,60 @@ namespace SewaRuanganUmy2
             txtLokasi.Clear();
         }
 
-        private void btnTutup_Click(object sender, EventArgs e)
+        private void btnTambah_Click(object sender, EventArgs e)
         {
-            this.Close(); // Tutup form
-        }
-
-        private void btnHapus_Click(object sender, EventArgs e)
-        {
-            if (dgvRuangan.SelectedRows.Count == 0)
+            if (string.IsNullOrWhiteSpace(txtNamaRuangan.Text) ||
+                string.IsNullOrWhiteSpace(txtKapasitas.Text) ||
+                string.IsNullOrWhiteSpace(txtLokasi.Text))
             {
-                MessageBox.Show("Silakan pilih data ruangan yang ingin dihapus.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Harap isi semua data ruangan!");
                 return;
             }
 
-            string idRuangan = dgvRuangan.SelectedRows[0].Cells["id_ruangan"].Value.ToString();
-
-            DialogResult konfirmasi = MessageBox.Show("Apakah Anda yakin ingin menghapus data ruangan ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (konfirmasi != DialogResult.Yes)
+            if (System.Text.RegularExpressions.Regex.IsMatch(txtNamaRuangan.Text.Trim(), @"[^A-Za-z0-9\s]"))
+            {
+                MessageBox.Show("Nama ruangan hanya boleh huruf, angka, dan spasi.");
                 return;
+            }
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(txtLokasi.Text.Trim(), @"[^A-Za-z0-9\s.-]"))
+            {
+                MessageBox.Show("Lokasi hanya boleh huruf, angka, titik, dan tanda hubung.");
+                return;
+            }
+
+            int kapasitas;
+            if (!int.TryParse(txtKapasitas.Text.Trim(), out kapasitas) || kapasitas <= 0)
+            {
+                MessageBox.Show("Kapasitas harus berupa angka positif.");
+                return;
+            }
 
             using (SqlConnection conn = new SqlConnection(connectionString))
-            using (SqlCommand cmd = conn.CreateCommand())
+            using (SqlCommand cmd = new SqlCommand("sp_InsertRuangan", conn))
             {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@nama_ruangan", txtNamaRuangan.Text.Trim());
+                cmd.Parameters.AddWithValue("@kapasitas", kapasitas);
+                cmd.Parameters.AddWithValue("@lokasi", txtLokasi.Text.Trim());
+
                 try
                 {
                     conn.Open();
-                    cmd.CommandText = "DELETE FROM Ruangan WHERE id_ruangan = @id";
-                    cmd.Parameters.AddWithValue("@id", idRuangan);
-
                     int result = cmd.ExecuteNonQuery();
                     if (result > 0)
                     {
-                        MessageBox.Show("Data ruangan berhasil dihapus.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadData(); // Pastikan fungsi LoadData() merefresh data ruangan
+                        MessageBox.Show("Data berhasil disimpan.");
+                        LoadData();
                     }
                     else
                     {
-                        MessageBox.Show("Data ruangan gagal dihapus.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Gagal menyimpan data.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Terjadi kesalahan saat menghapus data ruangan: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Kesalahan: " + ex.Message);
                 }
             }
         }
@@ -157,59 +106,110 @@ namespace SewaRuanganUmy2
         {
             if (dgvRuangan.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Silakan pilih data ruangan yang ingin diubah.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Pilih data ruangan yang ingin diubah.");
                 return;
             }
 
             string idRuangan = dgvRuangan.SelectedRows[0].Cells["id_ruangan"].Value.ToString();
 
-            // Validasi input
             if (string.IsNullOrWhiteSpace(txtNamaRuangan.Text) ||
                 string.IsNullOrWhiteSpace(txtKapasitas.Text) ||
                 string.IsNullOrWhiteSpace(txtLokasi.Text))
-                
             {
-                MessageBox.Show("Harap isi semua data ruangan!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Harap isi semua data ruangan!");
                 return;
             }
 
-            // Validasi kapasitas
-            if (!int.TryParse(txtKapasitas.Text.Trim(), out int kapasitas) || kapasitas <= 0)
+            if (System.Text.RegularExpressions.Regex.IsMatch(txtNamaRuangan.Text.Trim(), @"[^A-Za-z0-9\s]"))
             {
-                MessageBox.Show("Kapasitas tidak valid! Harus berupa angka dan lebih dari 0.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nama ruangan hanya boleh huruf, angka, dan spasi.");
                 return;
             }
+
+            if (System.Text.RegularExpressions.Regex.IsMatch(txtLokasi.Text.Trim(), @"[^A-Za-z0-9\s.-]"))
+            {
+                MessageBox.Show("Lokasi hanya boleh huruf, angka, titik, dan tanda hubung.");
+                return;
+            }
+
+            int kapasitas;
+            if (!int.TryParse(txtKapasitas.Text.Trim(), out kapasitas) || kapasitas <= 0 || kapasitas > 999)
+            {
+                MessageBox.Show("Kapasitas harus angka 1–999.");
+                return;
+            }
+
+            DialogResult confirm = MessageBox.Show("Yakin ingin mengubah data ini?", "Konfirmasi", MessageBoxButtons.YesNo);
+            if (confirm != DialogResult.Yes)
+                return;
 
             using (SqlConnection conn = new SqlConnection(connectionString))
-            using (SqlCommand cmd = conn.CreateCommand())
+            using (SqlCommand cmd = new SqlCommand("sp_UpdateRuangan", conn))
             {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id_ruangan", idRuangan);
+                cmd.Parameters.AddWithValue("@nama_ruangan", txtNamaRuangan.Text.Trim());
+                cmd.Parameters.AddWithValue("@kapasitas", kapasitas);
+                cmd.Parameters.AddWithValue("@lokasi", txtLokasi.Text.Trim());
+
                 try
                 {
                     conn.Open();
-                    cmd.CommandText = @"UPDATE Ruangan 
-                                SET nama_ruangan = @Nama, kapasitas = @Kapasitas, lokasi = @Lokasi 
-                                WHERE id_ruangan = @Id";
-
-                    cmd.Parameters.AddWithValue("@Nama", txtNamaRuangan.Text.Trim());
-                    cmd.Parameters.AddWithValue("@Kapasitas", kapasitas);
-                    cmd.Parameters.AddWithValue("@Lokasi", txtLokasi.Text.Trim());
-                   
-                    cmd.Parameters.AddWithValue("@Id", idRuangan);
-
                     int result = cmd.ExecuteNonQuery();
                     if (result > 0)
                     {
-                        MessageBox.Show("Data ruangan berhasil diupdate.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadData(); // Pastikan LoadData merefresh isi DataGridView
+                        MessageBox.Show("Data berhasil diupdate.");
+                        LoadData();
                     }
                     else
                     {
-                        MessageBox.Show("Data ruangan gagal diupdate.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Gagal update data.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Terjadi kesalahan saat update data ruangan: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Kesalahan: " + ex.Message);
+                }
+            }
+        }
+
+        private void btnHapus_Click(object sender, EventArgs e)
+        {
+            if (dgvRuangan.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Pilih data yang ingin dihapus.");
+                return;
+            }
+
+            string idRuangan = dgvRuangan.SelectedRows[0].Cells["id_ruangan"].Value.ToString();
+
+            DialogResult confirm = MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo);
+            if (confirm != DialogResult.Yes)
+                return;
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlCommand cmd = new SqlCommand("sp_DeleteRuangan", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@id_ruangan", idRuangan);
+
+                try
+                {
+                    conn.Open();
+                    int result = cmd.ExecuteNonQuery();
+                    if (result > 0)
+                    {
+                        MessageBox.Show("Data berhasil dihapus.");
+                        LoadData();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Gagal menghapus data.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Kesalahan: " + ex.Message);
                 }
             }
         }
@@ -222,8 +222,16 @@ namespace SewaRuanganUmy2
                 txtNamaRuangan.Text = row.Cells["nama_ruangan"].Value.ToString();
                 txtKapasitas.Text = row.Cells["kapasitas"].Value.ToString();
                 txtLokasi.Text = row.Cells["lokasi"].Value.ToString();
-                
             }
+        }
+
+        private void btnTutup_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void FormRuangan_Load(object sender, EventArgs e)
+        {
         }
     }
 }

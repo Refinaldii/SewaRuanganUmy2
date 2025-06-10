@@ -14,111 +14,240 @@ namespace SewaRuanganUmy2
     public partial class FormPembayaran : Form
     {
         private string connectionString = "Data Source=YUUTA\\YUUTA;Initial Catalog=SewaRuanganUMY;Integrated Security=True";
-        public FormPembayaran()
+        private int selectedIdPembayaran = -1;
+        private Form1 _form1;
+
+
+        public FormPembayaran(Form1 form1)
         {
             InitializeComponent();
+            _form1 = form1; // ← Ini menyimpan objek Form1
         }
 
-        private void btnUpdate_Click(object sender, EventArgs e)
+        private void FormPembayaran_Load(object sender, EventArgs e)
         {
-            // Validasi input
-            if (string.IsNullOrWhiteSpace(txtIDReservasi.Text) ||
+            LoadComboReservasi();
+            LoadComboMetodePembayaran();
+            LoadComboStatus();
+            LoadDataPembayaran();
+        }
+
+        private void LoadComboReservasi()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                string query = "SELECT id_reservasi FROM Reservasi";
+                SqlDataAdapter adapter = new SqlDataAdapter(query, conn);
+                DataTable dt = new DataTable();
+                adapter.Fill(dt);
+
+                cmbReservasi.DataSource = dt;
+                cmbReservasi.DisplayMember = "id_reservasi";
+                cmbReservasi.ValueMember = "id_reservasi";
+                cmbReservasi.SelectedIndex = -1;
+            }
+        }
+
+        private void LoadComboMetodePembayaran()
+        {
+            cmbMetodePembayaran.Items.Clear();
+            cmbMetodePembayaran.Items.Add("Transfer Bank");
+            cmbMetodePembayaran.Items.Add("Kartu Kredit");
+            cmbMetodePembayaran.Items.Add("Kartu Debit");
+            cmbMetodePembayaran.Items.Add("E-Wallet");
+            cmbMetodePembayaran.SelectedIndex = -1;
+        }
+
+        private void LoadComboStatus()
+        {
+            cmbStatus.Items.Clear();
+            cmbStatus.Items.Add("Menunggu");
+            cmbStatus.Items.Add("Lunas");
+            cmbStatus.Items.Add("Gagal");
+            cmbStatus.SelectedIndex = -1;
+        }
+
+
+        private void LoadDataPembayaran()
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                using (SqlCommand cmd = new SqlCommand("sp_GetAllPembayaran", conn))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    adapter.Fill(dt);
+                    dgvPembayaran.DataSource = dt;
+                }
+            }
+        }
+        private void ClearForm()
+        {
+            cmbReservasi.SelectedIndex = -1;
+            txtJumlah.Clear();
+            cmbMetodePembayaran.SelectedIndex = -1;
+            cmbStatus.SelectedIndex = -1;
+            dtpTanggalPembayaran.Value = DateTime.Today;
+        }
+
+
+        private void btnTambah_Click(object sender, EventArgs e)
+        {
+            if (cmbReservasi.SelectedValue == null ||
                 string.IsNullOrWhiteSpace(txtJumlah.Text) ||
-                string.IsNullOrWhiteSpace(txtMetodePembayaran.Text) ||
-                string.IsNullOrWhiteSpace(txtStatus.Text) ||
-                string.IsNullOrWhiteSpace(txtTanggalPembayaran.Text))
+                cmbMetodePembayaran.SelectedItem == null ||
+                cmbStatus.SelectedItem == null)
             {
-                MessageBox.Show("Harap isi semua data!", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Harap isi semua field.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Validasi tanggal
-            DateTime tanggalPembayaran;
-            if (!DateTime.TryParse(txtTanggalPembayaran.Text, out tanggalPembayaran))
+            string jumlahText = txtJumlah.Text.Trim().Replace(".", "").Replace(",", "");
+            if (!decimal.TryParse(jumlahText, out decimal jumlah) || jumlah <= 0)
             {
-                MessageBox.Show("Format tanggal tidak valid. Gunakan format yyyy-MM-dd!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Jumlah tidak valid.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            // Lakukan update data ke database
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 try
                 {
                     conn.Open();
-                    string query = @"UPDATE Pembayaran 
-                             SET jumlah = @Jumlah, 
-                                 metode_pembayaran = @Metode, 
-                                 status = @Status, 
-                                 tanggal_pembayaran = @Tanggal 
-                             WHERE id_reservasi = @IdReservasi";
-
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlCommand cmd = new SqlCommand("sp_InsertPembayaran", conn))
                     {
-                        cmd.Parameters.AddWithValue("@Jumlah", txtJumlah.Text);
-                        cmd.Parameters.AddWithValue("@Metode", txtMetodePembayaran.Text);
-                        cmd.Parameters.AddWithValue("@Status", txtStatus.Text);
-                        cmd.Parameters.AddWithValue("@Tanggal", tanggalPembayaran);
-                        cmd.Parameters.AddWithValue("@IdReservasi", txtIDReservasi.Text);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@id_reservasi", cmbReservasi.SelectedValue);
+                        cmd.Parameters.AddWithValue("@jumlah", jumlah);
+                        cmd.Parameters.AddWithValue("@metode_pembayaran", cmbMetodePembayaran.SelectedItem.ToString());
+                        cmd.Parameters.AddWithValue("@status", cmbStatus.SelectedItem.ToString());
+
+                        int result = cmd.ExecuteNonQuery();
+                        if (result > 0)
+                        {
+                            MessageBox.Show("Data berhasil disimpan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            ClearForm();
+                            LoadDataPembayaran();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Gagal menyimpan data.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Kesalahan: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            if (selectedIdPembayaran == -1)
+            {
+                MessageBox.Show("Silakan pilih data yang ingin diupdate.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (cmbReservasi.SelectedValue == null ||
+                string.IsNullOrWhiteSpace(txtJumlah.Text) ||
+                cmbMetodePembayaran.SelectedItem == null ||
+                cmbStatus.SelectedItem == null)
+            {
+                MessageBox.Show("Semua field harus diisi.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            string jumlahText = txtJumlah.Text.Trim().Replace(".", "").Replace(",", "");
+            if (!decimal.TryParse(jumlahText, out decimal jumlah) || jumlah <= 0)
+            {
+                MessageBox.Show("Jumlah tidak valid.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            DialogResult confirm = MessageBox.Show("Yakin ingin mengupdate data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (confirm != DialogResult.Yes)
+                return;
+
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                try
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = new SqlCommand("sp_UpdatePembayaran", conn))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@id_pembayaran", selectedIdPembayaran);
+                        cmd.Parameters.AddWithValue("@id_reservasi", cmbReservasi.SelectedValue);
+                        cmd.Parameters.AddWithValue("@jumlah", jumlah);
+                        cmd.Parameters.AddWithValue("@metode_pembayaran", cmbMetodePembayaran.SelectedItem.ToString());
+                        cmd.Parameters.AddWithValue("@status", cmbStatus.SelectedItem.ToString());
 
                         int result = cmd.ExecuteNonQuery();
                         if (result > 0)
                         {
                             MessageBox.Show("Data berhasil diupdate.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            ClearForm(); // Optional
-                                         // LoadData(); // Kalau kamu punya fungsi ini, bisa diaktifkan
+                            ClearForm();
+                            LoadDataPembayaran();
+                            selectedIdPembayaran = -1;
                         }
                         else
                         {
-                            MessageBox.Show("Data gagal diupdate atau tidak ditemukan.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("Gagal mengupdate data.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Terjadi kesalahan saat update: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Kesalahan: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
 
 
+
         private void btnHapus_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtIDReservasi.Text))
+            if (selectedIdPembayaran == -1)
             {
-                MessageBox.Show("Harap masukkan ID Reservasi yang akan dihapus.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Silakan pilih data yang ingin dihapus.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            DialogResult confirm = MessageBox.Show("Apakah Anda yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-            if (confirm == DialogResult.No) return;
+            var konfirmasi = MessageBox.Show("Yakin ingin menghapus data ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (konfirmasi != DialogResult.Yes)
+                return;
 
             using (SqlConnection conn = new SqlConnection(connectionString))
             {
                 try
                 {
                     conn.Open();
-                    string query = "DELETE FROM Pembayaran WHERE id_reservasi = @IdReservasi";
-
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
+                    using (SqlCommand cmd = new SqlCommand("sp_DeletePembayaran", conn))
                     {
-                        cmd.Parameters.AddWithValue("@IdReservasi", txtIDReservasi.Text);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@id_pembayaran", selectedIdPembayaran);
 
                         int result = cmd.ExecuteNonQuery();
                         if (result > 0)
                         {
                             MessageBox.Show("Data berhasil dihapus.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            ClearForm(); // Optional: hapus data dari textbox
+                            ClearForm();
+                            LoadDataPembayaran();
+                            selectedIdPembayaran = -1;
                         }
                         else
                         {
-                            MessageBox.Show("Data tidak ditemukan atau gagal dihapus.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show("Gagal menghapus data.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Terjadi kesalahan: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Kesalahan: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -126,157 +255,34 @@ namespace SewaRuanganUmy2
 
         private void btnTutup_Click(object sender, EventArgs e)
         {
-            this.Close(); // Tutup form
+            _form1.Show();   // Tampilkan kembali Form1
+            this.Close();    // Tutup FormReservasi
         }
 
-        private void btnTambah_Click(object sender, EventArgs e)
-        {
-            // Validasi kosong
-            if (string.IsNullOrWhiteSpace(txtIDReservasi.Text) ||
-                string.IsNullOrWhiteSpace(txtJumlah.Text) ||
-                string.IsNullOrWhiteSpace(txtMetodePembayaran.Text) ||
-                string.IsNullOrWhiteSpace(txtStatus.Text) ||
-                string.IsNullOrWhiteSpace(txtTanggalPembayaran.Text))
-            {
-                MessageBox.Show("Harap isi semua field.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Validasi jumlah
-            if (!decimal.TryParse(txtJumlah.Text, out decimal jumlah) || jumlah <= 0)
-            {
-                MessageBox.Show("Jumlah tidak valid. Masukkan angka lebih dari 0.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Validasi tanggal
-            if (!DateTime.TryParse(txtTanggalPembayaran.Text, out DateTime tanggalPembayaran))
-            {
-                MessageBox.Show("Tanggal pembayaran tidak valid. Format: yyyy-MM-dd.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Validasi metode pembayaran
-            string[] metodeValid = { "Transfer Bank", "Kartu Kredit", "Kartu Debit", "E-Wallet" };
-            if (!metodeValid.Contains(txtMetodePembayaran.Text.Trim()))
-            {
-                MessageBox.Show("Metode pembayaran tidak valid. Pilihan yang benar: " + string.Join(", ", metodeValid),
-                                "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Validasi status
-            string[] statusValid = { "Menunggu", "Lunas", "Gagal" };
-            if (!statusValid.Contains(txtStatus.Text.Trim()))
-            {
-                MessageBox.Show("Status tidak valid. Pilihan yang benar: " + string.Join(", ", statusValid),
-                                "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            // Simpan ke database
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                try
-                {
-                    conn.Open();
-                    string query = @"INSERT INTO Pembayaran (id_reservasi, jumlah, metode_pembayaran, status, tanggal_pembayaran)
-                             VALUES (@IdReservasi, @Jumlah, @Metode, @Status, @Tanggal)";
-
-                    using (SqlCommand cmd = new SqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@IdReservasi", txtIDReservasi.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Jumlah", jumlah);
-                        cmd.Parameters.AddWithValue("@Metode", txtMetodePembayaran.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Status", txtStatus.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Tanggal", tanggalPembayaran);
-
-                        int result = cmd.ExecuteNonQuery();
-                        if (result > 0)
-                        {
-                            MessageBox.Show("Data pembayaran berhasil disimpan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            ClearForm();
-                        }
-                        else
-                        {
-                            MessageBox.Show("Gagal menyimpan data pembayaran.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Terjadi kesalahan: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-
-
-        private void LoadData()
-        {
-            using (SqlConnection conn = new SqlConnection(connectionString))
-            {
-                try
-                {
-                    conn.Open();
-                    string query = "SELECT * FROM Pembayaran";
-                    SqlDataAdapter da = new SqlDataAdapter(query, conn);
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-                    dgvPembayaran.DataSource = dt;
-                    ClearForm();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Gagal memuat data: " + ex.Message);
-                }
-            }
-        }
-
-
-
-
-        private void ClearForm()
-        {
-            txtIDReservasi.Clear();
-            txtJumlah.Clear();
-            txtMetodePembayaran.Clear();
-            txtStatus.Clear();
-            txtTanggalPembayaran.Clear();
-        }
-
-
-        private void dgvPembayaran_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void dgvPembayaran_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0)
             {
                 DataGridViewRow row = dgvPembayaran.Rows[e.RowIndex];
 
-                txtIDReservasi.Text = row.Cells["id_reservasi"].Value.ToString();
+                selectedIdPembayaran = Convert.ToInt32(row.Cells["id_pembayaran"].Value);
+                cmbReservasi.SelectedValue = row.Cells["id_reservasi"].Value;
                 txtJumlah.Text = row.Cells["jumlah"].Value.ToString();
-                txtMetodePembayaran.Text = row.Cells["metode_pembayaran"].Value.ToString();
-                txtStatus.Text = row.Cells["status"].Value.ToString();
-                txtTanggalPembayaran.Text = Convert.ToDateTime(row.Cells["tanggal_pembayaran"].Value).ToString("yyyy-MM-dd");
+                cmbMetodePembayaran.SelectedItem = row.Cells["metode_pembayaran"].Value.ToString();
+                cmbStatus.SelectedItem = row.Cells["status"].Value.ToString();
+
+                // Update ke DateTimePicker
+                if (DateTime.TryParse(row.Cells["tanggal_pembayaran"].Value.ToString(), out DateTime tanggal))
+                {
+                    dtpTanggalPembayaran.Value = tanggal;
+                }
+                else
+                {
+                    // fallback ke tanggal hari ini jika parsing gagal
+                    dtpTanggalPembayaran.Value = DateTime.Today;
+                }
             }
         }
 
-
-        private void FormPembayaran_Load(object sender, EventArgs e)
-        {
-            LoadData();
-        }
-
-        private void dgvPembayaranCellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0)
-            {
-                DataGridViewRow row = dgvPembayaran.Rows[e.RowIndex];
-
-                txtIDReservasi.Text = row.Cells["id_reservasi"].Value.ToString();
-                txtJumlah.Text = row.Cells["jumlah"].Value.ToString();
-                txtMetodePembayaran.Text = row.Cells["metode_pembayaran"].Value.ToString();
-                txtStatus.Text = row.Cells["status"].Value.ToString();
-                txtTanggalPembayaran.Text = Convert.ToDateTime(row.Cells["tanggal_pembayaran"].Value).ToString("yyyy-MM-dd");
-            }
-        }
     }
 }

@@ -4,16 +4,26 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ExcelDataReader;
+using System.Data;
+using System.IO;
+
+
+
+
 
 namespace SewaRuanganUmy2
 {
     public partial class FormPaket : Form
     {
         private string connectionString = "Data Source=YUUTA\\YUUTA;Initial Catalog=SewaRuanganUMY;Integrated Security=True";
+
+        private Form1 _form1;
 
         public FormPaket()
         {
@@ -61,6 +71,13 @@ namespace SewaRuanganUmy2
                 return;
             }
 
+            // Validasi nama paket hanya boleh huruf, angka, dan spasi
+            if (System.Text.RegularExpressions.Regex.IsMatch(txtPaket.Text.Trim(), @"[^A-Za-z0-9\s]"))
+            {
+                MessageBox.Show("Nama paket hanya boleh mengandung huruf, angka, dan spasi.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             // Validasi harga
             if (!decimal.TryParse(txtHarga.Text.Trim(), out decimal hargaPaket))
             {
@@ -68,28 +85,40 @@ namespace SewaRuanganUmy2
                 return;
             }
 
+            // Validasi harga tidak boleh lebih kecil dari 1000
+            if (hargaPaket < 500000)
+            {
+                MessageBox.Show("Harga paket tidak boleh kurang dari 500000 rupiah!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            // Menyimpan data paket ke database
             using (SqlConnection conn = new SqlConnection(connectionString))
-            using (SqlCommand cmd = conn.CreateCommand())
             {
                 try
                 {
                     conn.Open();
-                    cmd.CommandText = "INSERT INTO Paket (nama_paket, deskripsi, harga) VALUES (@Nama, @Deskripsi, @Harga)";
+                    using (SqlCommand cmd = new SqlCommand("sp_InsertPaket", conn)) {
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        cmd.Parameters.AddWithValue("@nama_paket", txtPaket.Text.Trim());
+                        cmd.Parameters.AddWithValue("@deskripsi", txtDeskripsi.Text.Trim());
+                        cmd.Parameters.AddWithValue("@harga", hargaPaket);
 
-                    cmd.Parameters.AddWithValue("@Nama", txtPaket.Text.Trim());
-                    cmd.Parameters.AddWithValue("@Deskripsi", txtDeskripsi.Text.Trim());
-                    cmd.Parameters.AddWithValue("@Harga", hargaPaket);
+                        int result = cmd.ExecuteNonQuery();
+                        // Menambahkan parameter untuk mencegah SQL Injection
 
-                    int result = cmd.ExecuteNonQuery();
-                    if (result > 0)
-                    {
-                        MessageBox.Show("Paket berhasil ditambahkan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadData(); // Pastikan LoadData() sesuai dengan grid atau tampilan yang kamu gunakan
+                        if (result > 0)
+                        {
+                            MessageBox.Show("Paket berhasil ditambahkan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            LoadData(); // Pastikan LoadData() sesuai dengan grid atau tampilan yang kamu gunakan
+                        }
+                        else
+                        {
+                            MessageBox.Show("Gagal menambahkan Paket. Tidak ada data yang disimpan.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+
                     }
-                    else
-                    {
-                        MessageBox.Show("Gagal menambahkan Paket. Tidak ada data yang disimpan.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    
                 }
                 catch (Exception ex)
                 {
@@ -97,6 +126,7 @@ namespace SewaRuanganUmy2
                 }
             }
         }
+
 
 
         private void btnUpdate_Click(object sender, EventArgs e)
@@ -115,6 +145,13 @@ namespace SewaRuanganUmy2
                     return;
                 }
 
+                // Validasi nama paket hanya boleh huruf, angka, dan spasi
+                if (System.Text.RegularExpressions.Regex.IsMatch(txtPaket.Text.Trim(), @"[^A-Za-z0-9\s]"))
+                {
+                    MessageBox.Show("Nama paket hanya boleh mengandung huruf, angka, dan spasi.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 // Validasi harga
                 decimal harga;
                 if (!decimal.TryParse(txtHarga.Text.Trim(), out harga))
@@ -123,30 +160,45 @@ namespace SewaRuanganUmy2
                     return;
                 }
 
+                // Validasi harga tidak boleh kurang dari 1000
+                if (harga < 1000)
+                {
+                    MessageBox.Show("Harga paket tidak boleh kurang dari 1000 rupiah!", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                // Konfirmasi update
+                DialogResult konfirmasi = MessageBox.Show("Apakah Anda yakin ingin mengupdate data paket ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (konfirmasi != DialogResult.Yes)
+                {
+                    return; // Batalkan jika pengguna memilih "No"
+                }
+
                 using (SqlConnection conn = new SqlConnection(connectionString))
                 {
                     try
                     {
                         conn.Open();
-                        string query = "UPDATE Paket SET nama_paket=@Nama, deskripsi=@Deskripsi, harga=@Harga WHERE id_paket=@Id";
-                        SqlCommand cmd = new SqlCommand(query, conn);
-
-                        // Menambahkan parameter ke query
-                        cmd.Parameters.AddWithValue("@Nama", txtPaket.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Deskripsi", txtDeskripsi.Text.Trim());
-                        cmd.Parameters.AddWithValue("@Harga", harga);
-                        cmd.Parameters.AddWithValue("@Id", id);
-
-                        // Mengeksekusi query
-                        int result = cmd.ExecuteNonQuery();
-                        if (result > 0)
+                        using (SqlCommand cmd = new SqlCommand("sp_UpdatePaket", conn))
                         {
-                            MessageBox.Show("Paket berhasil diubah.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            LoadData();  // Pastikan fungsi LoadData() sudah didefinisikan untuk memperbarui tampilan data
-                        }
-                        else
-                        {
-                            MessageBox.Show("Paket gagal diubah.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            cmd.CommandType = CommandType.StoredProcedure;
+
+                            // Tambahkan parameter ke stored procedure
+                            cmd.Parameters.AddWithValue("@id_paket", Convert.ToInt32(id));
+                            cmd.Parameters.AddWithValue("@nama_paket", txtPaket.Text.Trim());
+                            cmd.Parameters.AddWithValue("@deskripsi", txtDeskripsi.Text.Trim());
+                            cmd.Parameters.AddWithValue("@harga", harga);
+
+                            int result = cmd.ExecuteNonQuery();
+                            if (result > 0)
+                            {
+                                MessageBox.Show("Paket berhasil diubah.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                LoadData(); // Refresh data
+                            }
+                            else
+                            {
+                                MessageBox.Show("Paket gagal diubah.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -160,6 +212,8 @@ namespace SewaRuanganUmy2
                 MessageBox.Show("Silakan pilih baris paket yang ingin diubah.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
+
+
 
         private void btnHapus_Click(object sender, EventArgs e)
         {
@@ -177,26 +231,27 @@ namespace SewaRuanganUmy2
                     try
                     {
                         conn.Open();
-                        string query = "DELETE FROM Paket WHERE id_paket=@Id";
-
-                        // Menggunakan 'using' untuk SqlCommand untuk otomatis membersihkan objek setelah selesai digunakan
-                        using (SqlCommand cmd = new SqlCommand(query, conn))
+                        using (SqlCommand cmd = new SqlCommand("sp_DeletePaket", conn))
                         {
-                            cmd.Parameters.AddWithValue("@Id", id);
+                            cmd.CommandType = CommandType.StoredProcedure;
+
+                            // Tambahkan parameter untuk stored procedure
+                            cmd.Parameters.AddWithValue("@id_paket", Convert.ToInt32(id));
+
                             int result = cmd.ExecuteNonQuery();
 
                             if (result > 0)
                             {
                                 MessageBox.Show("Paket berhasil dihapus.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                LoadData();  // Pastikan LoadData() sudah ada untuk memperbarui tampilan data
+                                LoadData(); // Refresh tampilan
                             }
                             else
                             {
-                                MessageBox.Show("Paket gagal dihapus. Mungkin data sudah tidak ada.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show("Paket gagal dihapus. Data mungkin tidak ditemukan.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch (SqlException ex)
                     {
                         MessageBox.Show("Terjadi kesalahan saat menghapus paket: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
@@ -208,10 +263,86 @@ namespace SewaRuanganUmy2
             }
         }
 
+
         private void btnTutup_Click(object sender, EventArgs e)
         {
+            
             this.Close(); // Tutup form
         }
+
+        private void ImportPaketFromExcel(string filePath)
+        {
+            try
+            {
+                System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+                using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                {
+                    var result = reader.AsDataSet(new ExcelDataSetConfiguration()
+                    {
+                        ConfigureDataTable = (_) => new ExcelDataTableConfiguration()
+                        {
+                            UseHeaderRow = true
+                        }
+                    });
+
+                    DataTable dt = result.Tables[0];
+
+                    using (SqlConnection conn = new SqlConnection(connectionString))
+                    {
+                        conn.Open();
+
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            if (!ValidateRow(row))
+                                continue;
+
+                            using (SqlCommand cmd = new SqlCommand("sp_InsertPaket", conn))
+                            {
+                                cmd.CommandType = CommandType.StoredProcedure;
+
+                                cmd.Parameters.AddWithValue("@nama_paket", row["nama_paket"].ToString());
+                                cmd.Parameters.AddWithValue("@deskripsi", row["deskripsi"].ToString());
+                                cmd.Parameters.AddWithValue("@harga", Convert.ToDecimal(row["harga"]));
+
+                                cmd.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
+                    MessageBox.Show("Data paket berhasil diimpor menggunakan stored procedure!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadData();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Terjadi kesalahan saat mengimpor data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private bool ValidateRow(DataRow row)
+        {
+            return !string.IsNullOrWhiteSpace(row["nama_paket"]?.ToString()) &&
+                   !string.IsNullOrWhiteSpace(row["deskripsi"]?.ToString()) &&
+                   decimal.TryParse(row["harga"]?.ToString(), out decimal harga) &&
+                   harga >= 1000;
+        }
+
+
+
+
+        private void btnImportExcel_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "Excel Files|*.xlsx";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog.FileName;
+                ImportPaketFromExcel(filePath);
+            }
+        }
+
 
 
         private void FormPaket_Load(object sender, EventArgs e)
@@ -228,6 +359,11 @@ namespace SewaRuanganUmy2
                 txtDeskripsi.Text = row.Cells["deskripsi"].Value.ToString();
                 txtHarga.Text = row.Cells["harga"].Value.ToString();
             }
+        }
+
+        private void dgvPaket_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
 }

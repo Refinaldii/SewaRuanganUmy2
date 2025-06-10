@@ -29,19 +29,20 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.txtEmail = new System.Windows.Forms.TextBox();
+            this.txtNoTelp = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.txtNamaPelanggan = new System.Windows.Forms.TextBox();
-            this.txtNoTelp = new System.Windows.Forms.TextBox();
-            this.txtEmail = new System.Windows.Forms.TextBox();
             this.txtAlamat = new System.Windows.Forms.TextBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
-            this.button4 = new System.Windows.Forms.Button();
             this.dgvPelanggan = new System.Windows.Forms.DataGridView();
+            this.button4 = new System.Windows.Forms.Button();
+            this.btnAnalisis = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPelanggan)).BeginInit();
             this.SuspendLayout();
@@ -68,6 +69,22 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 53F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(517, 206);
             this.tableLayoutPanel1.TabIndex = 0;
+            // 
+            // txtEmail
+            // 
+            this.txtEmail.Location = new System.Drawing.Point(173, 101);
+            this.txtEmail.Multiline = true;
+            this.txtEmail.Name = "txtEmail";
+            this.txtEmail.Size = new System.Drawing.Size(341, 48);
+            this.txtEmail.TabIndex = 6;
+            // 
+            // txtNoTelp
+            // 
+            this.txtNoTelp.Location = new System.Drawing.Point(173, 52);
+            this.txtNoTelp.Multiline = true;
+            this.txtNoTelp.Name = "txtNoTelp";
+            this.txtNoTelp.Size = new System.Drawing.Size(341, 43);
+            this.txtNoTelp.TabIndex = 5;
             // 
             // label1
             // 
@@ -113,22 +130,6 @@
             this.txtNamaPelanggan.Size = new System.Drawing.Size(341, 43);
             this.txtNamaPelanggan.TabIndex = 4;
             // 
-            // txtNoTelp
-            // 
-            this.txtNoTelp.Location = new System.Drawing.Point(173, 52);
-            this.txtNoTelp.Multiline = true;
-            this.txtNoTelp.Name = "txtNoTelp";
-            this.txtNoTelp.Size = new System.Drawing.Size(341, 43);
-            this.txtNoTelp.TabIndex = 5;
-            // 
-            // txtEmail
-            // 
-            this.txtEmail.Location = new System.Drawing.Point(173, 101);
-            this.txtEmail.Multiline = true;
-            this.txtEmail.Name = "txtEmail";
-            this.txtEmail.Size = new System.Drawing.Size(341, 48);
-            this.txtEmail.TabIndex = 6;
-            // 
             // txtAlamat
             // 
             this.txtAlamat.Location = new System.Drawing.Point(173, 155);
@@ -139,7 +140,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(655, 33);
+            this.button1.Location = new System.Drawing.Point(655, 12);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(93, 43);
             this.button1.TabIndex = 1;
@@ -149,7 +150,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(655, 95);
+            this.button2.Location = new System.Drawing.Point(655, 64);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(93, 43);
             this.button2.TabIndex = 2;
@@ -159,23 +160,13 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(655, 154);
+            this.button3.Location = new System.Drawing.Point(655, 113);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(93, 43);
             this.button3.TabIndex = 3;
             this.button3.Text = "Delete";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.btnHapus_Click);
-            // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(655, 216);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(93, 43);
-            this.button4.TabIndex = 4;
-            this.button4.Text = "Tutup";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.btnTutup_Click);
             // 
             // dgvPelanggan
             // 
@@ -188,11 +179,32 @@
             this.dgvPelanggan.TabIndex = 5;
             this.dgvPelanggan.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPelanggan_CellClick);
             // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(655, 167);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(93, 43);
+            this.button4.TabIndex = 4;
+            this.button4.Text = "Tutup";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.btnTutup_Click);
+            // 
+            // btnAnalisis
+            // 
+            this.btnAnalisis.Location = new System.Drawing.Point(655, 226);
+            this.btnAnalisis.Name = "btnAnalisis";
+            this.btnAnalisis.Size = new System.Drawing.Size(93, 43);
+            this.btnAnalisis.TabIndex = 6;
+            this.btnAnalisis.Text = "Analisis";
+            this.btnAnalisis.UseVisualStyleBackColor = true;
+            this.btnAnalisis.Click += new System.EventHandler(this.btnAnalisis_Click);
+            // 
             // FormPelanggan
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnAnalisis);
             this.Controls.Add(this.dgvPelanggan);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
@@ -223,7 +235,8 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button4;
         private System.Windows.Forms.DataGridView dgvPelanggan;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.Button btnAnalisis;
     }
 }

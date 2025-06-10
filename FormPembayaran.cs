@@ -104,9 +104,9 @@ namespace SewaRuanganUmy2
             }
 
             string jumlahText = txtJumlah.Text.Trim().Replace(".", "").Replace(",", "");
-            if (!decimal.TryParse(jumlahText, out decimal jumlah) || jumlah <= 0)
+            if (!decimal.TryParse(jumlahText, out decimal jumlah) || jumlah < 500000)
             {
-                MessageBox.Show("Jumlah tidak valid.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Jumlah minimal adalah Rp500.000.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -162,9 +162,9 @@ namespace SewaRuanganUmy2
             }
 
             string jumlahText = txtJumlah.Text.Trim().Replace(".", "").Replace(",", "");
-            if (!decimal.TryParse(jumlahText, out decimal jumlah) || jumlah <= 0)
+            if (!decimal.TryParse(jumlahText, out decimal jumlah) || jumlah < 500000)
             {
-                MessageBox.Show("Jumlah tidak valid.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Jumlah minimal adalah Rp500.000.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 

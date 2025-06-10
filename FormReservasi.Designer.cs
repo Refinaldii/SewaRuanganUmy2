@@ -51,6 +51,7 @@
             this.dgvReservasi = new System.Windows.Forms.DataGridView();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.btnAnalisis = new System.Windows.Forms.Button();
+            this.label8 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvReservasi)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).BeginInit();
@@ -211,7 +212,7 @@
             // 
             // btnTambahkan
             // 
-            this.btnTambahkan.Location = new System.Drawing.Point(647, 15);
+            this.btnTambahkan.Location = new System.Drawing.Point(584, 12);
             this.btnTambahkan.Name = "btnTambahkan";
             this.btnTambahkan.Size = new System.Drawing.Size(94, 45);
             this.btnTambahkan.TabIndex = 1;
@@ -221,7 +222,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(647, 81);
+            this.button2.Location = new System.Drawing.Point(584, 66);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(94, 45);
             this.button2.TabIndex = 2;
@@ -231,7 +232,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(647, 137);
+            this.button3.Location = new System.Drawing.Point(584, 120);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(94, 45);
             this.button3.TabIndex = 3;
@@ -241,7 +242,7 @@
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(647, 201);
+            this.button4.Location = new System.Drawing.Point(584, 182);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(94, 45);
             this.button4.TabIndex = 4;
@@ -263,7 +264,7 @@
             // 
             // btnAnalisis
             // 
-            this.btnAnalisis.Location = new System.Drawing.Point(632, 249);
+            this.btnAnalisis.Location = new System.Drawing.Point(584, 243);
             this.btnAnalisis.Name = "btnAnalisis";
             this.btnAnalisis.Size = new System.Drawing.Size(123, 47);
             this.btnAnalisis.TabIndex = 6;
@@ -271,11 +272,21 @@
             this.btnAnalisis.UseVisualStyleBackColor = true;
             this.btnAnalisis.Click += new System.EventHandler(this.btnAnalisis_Click);
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(729, 280);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(44, 16);
+            this.label8.TabIndex = 7;
+            this.label8.Text = "label8";
+            // 
             // FormReservasi
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.btnAnalisis);
             this.Controls.Add(this.dgvReservasi);
             this.Controls.Add(this.button4);
@@ -291,6 +302,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgvReservasi)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.bindingSource1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -318,5 +330,6 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox cmbStatus;
         private System.Windows.Forms.Button btnAnalisis;
+        private System.Windows.Forms.Label label8;
     }
 }

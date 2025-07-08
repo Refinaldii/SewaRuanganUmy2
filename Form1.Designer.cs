@@ -36,6 +36,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.btnReport = new System.Windows.Forms.Button();
+            this.btnDashboard = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // BtnTambahPelanggan
@@ -117,12 +118,22 @@
             this.btnReport.UseVisualStyleBackColor = true;
             this.btnReport.Click += new System.EventHandler(this.btnReport_Click);
             // 
+            // btnDashboard
+            // 
+            this.btnDashboard.Location = new System.Drawing.Point(564, 182);
+            this.btnDashboard.Name = "btnDashboard";
+            this.btnDashboard.Size = new System.Drawing.Size(93, 52);
+            this.btnDashboard.TabIndex = 8;
+            this.btnDashboard.Text = "DashBoard";
+            this.btnDashboard.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnDashboard);
             this.Controls.Add(this.btnReport);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button2);
@@ -148,6 +159,7 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnReport;
+        private System.Windows.Forms.Button btnDashboard;
     }
 }
 

@@ -95,12 +95,24 @@ namespace SewaRuanganUmy2
                         MessageBox.Show("Gagal menyimpan data.");
                     }
                 }
+                catch (SqlException ex)
+                {
+                    if (ex.Number == 2627 || ex.Number == 2601) // duplikat key
+                    {
+                        MessageBox.Show("Nama ruangan sudah ada. Gunakan nama lain.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Kesalahan SQL: " + ex.Message);
+                    }
+                }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Kesalahan: " + ex.Message);
                 }
             }
         }
+
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
@@ -164,6 +176,17 @@ namespace SewaRuanganUmy2
                     else
                     {
                         MessageBox.Show("Gagal update data.");
+                    }
+                }
+                catch (SqlException ex)
+                {
+                    if (ex.Number == 2627 || ex.Number == 2601)
+                    {
+                        MessageBox.Show("Nama ruangan sudah digunakan oleh ruangan lain.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Kesalahan SQL: " + ex.Message);
                     }
                 }
                 catch (Exception ex)

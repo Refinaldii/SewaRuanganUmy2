@@ -107,9 +107,16 @@ namespace SewaRuanganUmy2
                         MessageBox.Show("Gagal menyimpan data pelanggan.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-                catch (Exception ex)
+                catch (SqlException ex)
                 {
-                    MessageBox.Show("Terjadi kesalahan: " + ex.Message);
+                    if (ex.Number == 2627 || ex.Number == 2601)
+                    {
+                        MessageBox.Show("Email atau No HP sudah digunakan oleh pelanggan lain.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Kesalahan saat menyimpan data: " + ex.Message);
+                    }
                 }
             }
         }
@@ -154,9 +161,16 @@ namespace SewaRuanganUmy2
                         MessageBox.Show("Data pelanggan gagal diupdate.");
                     }
                 }
-                catch (Exception ex)
+                catch (SqlException ex)
                 {
-                    MessageBox.Show("Terjadi kesalahan saat update: " + ex.Message);
+                    if (ex.Number == 2627 || ex.Number == 2601)
+                    {
+                        MessageBox.Show("Email atau No HP sudah digunakan oleh pelanggan lain.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Kesalahan saat menyimpan data: " + ex.Message);
+                    }
                 }
             }
         }

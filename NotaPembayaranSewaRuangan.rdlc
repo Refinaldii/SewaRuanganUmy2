@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report xmlns="http://schemas.microsoft.com/sqlserver/reporting/2008/01/reportdefinition" xmlns:rd="http://schemas.microsoft.com/SQLServer/reporting/reportdesigner">
+  <Body>
+    <ReportItems>
+      <Textbox Name="Title">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>Nota Pembayaran Sewa Ruangan</Value>
+                <Style>
+                  <FontSize>16pt</FontSize>
+                  <FontWeight>Bold</FontWeight>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <Top>0.1in</Top>
+        <Left>0.25in</Left>
+        <Height>0.3in</Height>
+        <Width>3.85in</Width>
+        <Style />
+      </Textbox>
+      <Textbox Name="Textbox10">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>="Nama: " &amp; Fields!nama.Value</Value>
+                <Style>
+                  <FontStyle>Normal</FontStyle>
+                  <FontFamily>Times New Roman</FontFamily>
+                  <FontSize>12pt</FontSize>
+                  <FontWeight>Normal</FontWeight>
+                  <TextDecoration>None</TextDecoration>
+                  <Color>#000000</Color>
+                </Style>
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox10</rd:DefaultName>
+        <Top>1.4097cm</Top>
+        <Left>0.635cm</Left>
+        <Height>0.6cm</Height>
+        <Width>6.16183cm</Width>
+        <ZIndex>1</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox11">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>="Nama Paket: " &amp; Fields!nama_paket.Value</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox11</rd:DefaultName>
+        <Top>2.18609cm</Top>
+        <Left>0.635cm</Left>
+        <Height>0.6cm</Height>
+        <Width>6.16183cm</Width>
+        <ZIndex>2</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox12">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>="Nama Ruangan: " &amp; Fields!nama_ruangan.Value</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox12</rd:DefaultName>
+        <Top>3.10303cm</Top>
+        <Left>0.635cm</Left>
+        <Height>0.6cm</Height>
+        <Width>6.16183cm</Width>
+        <ZIndex>3</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox13">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>="Tanggal Reservasi: " &amp; Format(Fields!tanggal_reservasi.Value, "dd MMMM yyyy")</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox13</rd:DefaultName>
+        <Top>4.0132cm</Top>
+        <Left>0.635cm</Left>
+        <Height>0.6cm</Height>
+        <Width>6.16183cm</Width>
+        <ZIndex>4</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox14">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>="Waktu: " &amp; Fields!jam_mulai.Value.Hours &amp; ":" &amp; 
+    Right("0" &amp; Fields!jam_mulai.Value.Minutes, 2) &amp; 
+    " - " &amp; Fields!jam_selesai.Value.Hours &amp; ":" &amp; 
+    Right("0" &amp; Fields!jam_selesai.Value.Minutes, 2)</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox13</rd:DefaultName>
+        <Top>5.10808cm</Top>
+        <Left>0.635cm</Left>
+        <Height>0.6cm</Height>
+        <Width>6.16183cm</Width>
+        <ZIndex>5</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox15">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>="Jumlah Bayar: Rp" &amp; Format(Fields!jumlah.Value, "#,##0")</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox13</rd:DefaultName>
+        <Top>6.27225cm</Top>
+        <Left>0.635cm</Left>
+        <Height>0.6cm</Height>
+        <Width>6.16183cm</Width>
+        <ZIndex>6</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+      <Textbox Name="Textbox16">
+        <CanGrow>true</CanGrow>
+        <KeepTogether>true</KeepTogether>
+        <Paragraphs>
+          <Paragraph>
+            <TextRuns>
+              <TextRun>
+                <Value>="Metode: " &amp; Fields!metode_pembayaran.Value</Value>
+                <Style />
+              </TextRun>
+            </TextRuns>
+            <Style />
+          </Paragraph>
+        </Paragraphs>
+        <rd:DefaultName>Textbox13</rd:DefaultName>
+        <Top>7.39408cm</Top>
+        <Left>0.635cm</Left>
+        <Height>0.6cm</Height>
+        <Width>6.16183cm</Width>
+        <ZIndex>7</ZIndex>
+        <Style>
+          <Border>
+            <Style>None</Style>
+          </Border>
+          <PaddingLeft>2pt</PaddingLeft>
+          <PaddingRight>2pt</PaddingRight>
+          <PaddingTop>2pt</PaddingTop>
+          <PaddingBottom>2pt</PaddingBottom>
+        </Style>
+      </Textbox>
+    </ReportItems>
+    <Height>9.7155cm</Height>
+    <Style />
+  </Body>
+  <Width>16.51cm</Width>
+  <Page>
+    <PageHeight>20cm</PageHeight>
+    <PageWidth>17cm</PageWidth>
+    <LeftMargin>5cm</LeftMargin>
+    <RightMargin>5cm</RightMargin>
+    <TopMargin>5cm</TopMargin>
+    <BottomMargin>5cm</BottomMargin>
+    <ColumnSpacing>1.27cm</ColumnSpacing>
+    <Style />
+  </Page>
+  <AutoRefresh>0</AutoRefresh>
+  <DataSources>
+    <DataSource Name="SewaRuanganUmy">
+      <ConnectionProperties>
+        <DataProvider>System.Data.DataSet</DataProvider>
+        <ConnectString />
+      </ConnectionProperties>
+      <rd:DataSourceID>9f647bd1-20df-4cd5-b9db-999999999999</rd:DataSourceID>
+    </DataSource>
+  </DataSources>
+  <DataSets>
+    <DataSet Name="DataTable1">
+      <Query>
+        <DataSourceName>SewaRuanganUmy</DataSourceName>
+        <CommandText />
+      </Query>
+      <Fields>
+        <Field Name="id_reservasi">
+          <DataField>id_reservasi</DataField>
+        </Field>
+        <Field Name="nama">
+          <DataField>nama</DataField>
+        </Field>
+        <Field Name="nama_paket">
+          <DataField>nama_paket</DataField>
+        </Field>
+        <Field Name="tanggal_reservasi">
+          <DataField>tanggal_reservasi</DataField>
+        </Field>
+        <Field Name="jam_mulai">
+          <DataField>jam_mulai</DataField>
+        </Field>
+        <Field Name="jam_selesai">
+          <DataField>jam_selesai</DataField>
+        </Field>
+        <Field Name="jumlah">
+          <DataField>jumlah</DataField>
+        </Field>
+        <Field Name="status">
+          <DataField>status</DataField>
+        </Field>
+        <Field Name="metode_pembayaran">
+          <DataField>metode_pembayaran</DataField>
+        </Field>
+        <Field Name="nama_ruangan">
+          <DataField>nama_ruangan</DataField>
+        </Field>
+      </Fields>
+    </DataSet>
+  </DataSets>
+  <rd:ReportUnitType>Cm</rd:ReportUnitType>
+  <rd:ReportID>819c3413-3005-43fc-bcb4-696ef1b59da5</rd:ReportID>
+</Report>

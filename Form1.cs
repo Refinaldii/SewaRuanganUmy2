@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Org.BouncyCastle.Asn1.BC;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,6 +18,7 @@ namespace SewaRuanganUmy2
         public Form1()
         {
             InitializeComponent();
+            this.btnDashboard.Click += new System.EventHandler(this.btnDashboard_Click);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -82,9 +84,19 @@ namespace SewaRuanganUmy2
         private void btnReport_Click(object sender, EventArgs e)
         {
             this.Hide();
-            Reportviewer reportviewer = new Reportviewer();
-            reportviewer.ShowDialog();
+            FormCetakNota cetakNota = new FormCetakNota();
+            cetakNota.ShowDialog();
+            this.Show(); // Tampilkan kembali form utama setelah form nota ditutup
         }
+
+        private void btnDashboard_Click(object sender, EventArgs e)
+        {
+            this.Hide(); // Sembunyikan form menu
+            FormDashboard formDashboard = new FormDashboard();
+            formDashboard.FormClosed += (s, args) => this.Show(); // Tampilkan kembali saat ditutup
+            formDashboard.Show(); // Tampilkan dashboard
+        }
+    
 
     }
 }

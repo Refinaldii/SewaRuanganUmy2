@@ -120,9 +120,16 @@ namespace SewaRuanganUmy2
                     }
                     
                 }
-                catch (Exception ex)
+                catch (SqlException ex)
                 {
-                    MessageBox.Show("Gagal menambahkan Paket: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    if (ex.Number == 2627 || ex.Number == 2601) // Pelanggaran UNIQUE constraint
+                    {
+                        MessageBox.Show("Nama paket sudah digunakan. Harap gunakan nama lain.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Gagal menambahkan Paket: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
@@ -201,9 +208,16 @@ namespace SewaRuanganUmy2
                             }
                         }
                     }
-                    catch (Exception ex)
+                    catch (SqlException ex)
                     {
-                        MessageBox.Show("Terjadi kesalahan saat mengubah paket: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        if (ex.Number == 2627 || ex.Number == 2601)
+                        {
+                            MessageBox.Show("Nama paket sudah digunakan oleh paket lain.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Terjadi kesalahan saat mengubah paket: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
                 }
             }

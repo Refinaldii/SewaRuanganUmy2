@@ -1,47 +1,37 @@
-﻿using Org.BouncyCastle.Asn1.BC;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Windows.Forms;
-using System.Xml.Serialization;
 
 namespace SewaRuanganUmy2
 {
     public partial class Form1 : Form
     {
-        private string connectionString = "Data Source=YUUTA\\YUUTA;Initial Catalog=SewaRuanganUmy;Integrated Security=True";
+        private string connectionString = Koneksi.GetConnectionString();
+
+        public string GetConnectionString()
+        {
+            return connectionString;
+        }
+
         public Form1()
         {
             InitializeComponent();
             this.btnDashboard.Click += new System.EventHandler(this.btnDashboard_Click);
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            // default tampilan awal
-        }
+        private void Form1_Load(object sender, EventArgs e) { }
 
         private void BtnKeluar_Click(object sender, EventArgs e)
         {
-            Application.Exit(); // Menutup aplikasi
+            Application.Exit();
         }
 
         private void BtnPelanggan_Click(object sender, EventArgs e)
         {
-            this.Hide(); // Sembunyikan form saat ini
-            FormPelanggan formPelanggan = new FormPelanggan();
-
-            // Saat FormPelanggan ditutup, tampilkan kembali form ini
+            this.Hide();
+            FormPelanggan formPelanggan = new FormPelanggan(this);
             formPelanggan.FormClosed += (s, args) => this.Show();
-
             formPelanggan.Show();
         }
-
 
         private void BtnPaket_Click(object sender, EventArgs e)
         {
@@ -75,28 +65,20 @@ namespace SewaRuanganUmy2
             formPembayaran.Show();
         }
 
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnReport_Click(object sender, EventArgs e)
         {
             this.Hide();
             FormCetakNota cetakNota = new FormCetakNota();
             cetakNota.ShowDialog();
-            this.Show(); // Tampilkan kembali form utama setelah form nota ditutup
+            this.Show();
         }
 
         private void btnDashboard_Click(object sender, EventArgs e)
         {
-            this.Hide(); // Sembunyikan form menu
+            this.Hide();
             FormDashboard formDashboard = new FormDashboard();
-            formDashboard.FormClosed += (s, args) => this.Show(); // Tampilkan kembali saat ditutup
-            formDashboard.Show(); // Tampilkan dashboard
+            formDashboard.FormClosed += (s, args) => this.Show();
+            formDashboard.Show();
         }
-    
-
     }
 }

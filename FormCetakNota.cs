@@ -7,7 +7,8 @@ namespace SewaRuanganUmy2
 {
     public partial class FormCetakNota : Form
     {
-        private string connectionString = "Data Source=YUUTA\\YUUTA;Initial Catalog=SewaRuanganUMY;Integrated Security=True";
+        private string connectionString = Koneksi.GetConnectionString();
+
 
         public FormCetakNota()
         {

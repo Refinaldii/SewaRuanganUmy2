@@ -1,17 +1,23 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using ExcelDataReader;
 
 namespace SewaRuanganUmy2
 {
     public partial class FormPelanggan : Form
     {
-        private string connectionString = "Data Source=YUUTA\\YUUTA;Initial Catalog=SewaRuanganUMY;Integrated Security=True";
+        private string connectionString;
+        private Form1 mainForm;
 
-        public FormPelanggan()
+        public FormPelanggan(Form1 formUtama)
         {
             InitializeComponent();
+            mainForm = formUtama;
+            connectionString = mainForm.GetConnectionString();
         }
 
         private void FormPelanggan_Load(object sender, EventArgs e)
@@ -58,7 +64,7 @@ namespace SewaRuanganUmy2
                 return false;
             }
 
-            if (System.Text.RegularExpressions.Regex.IsMatch(txtNamaPelanggan.Text.Trim(), @"[^A-Za-z\s]"))
+            if (Regex.IsMatch(txtNamaPelanggan.Text.Trim(), @"[^A-Za-z\s]"))
             {
                 MessageBox.Show("Nama pelanggan hanya boleh mengandung huruf dan spasi.", "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
@@ -83,6 +89,13 @@ namespace SewaRuanganUmy2
         {
             if (!ValidasiInput()) return;
 
+            string noHP = txtNoTelp.Text.Trim();
+            if (noHP.Length > 13)
+            {
+                MessageBox.Show("Nomor HP tidak boleh lebih dari 13 digit.", "Validasi Nomor HP", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             using (SqlConnection conn = new SqlConnection(connectionString))
             using (SqlCommand cmd = new SqlCommand("sp_InsertPelanggan", conn))
             {
@@ -91,7 +104,7 @@ namespace SewaRuanganUmy2
                     conn.Open();
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@nama", txtNamaPelanggan.Text.Trim());
-                    cmd.Parameters.AddWithValue("@no_hp", txtNoTelp.Text.Trim());
+                    cmd.Parameters.AddWithValue("@no_hp", noHP);
                     cmd.Parameters.AddWithValue("@email", txtEmail.Text.Trim());
                     cmd.Parameters.AddWithValue("@alamat", txtAlamat.Text.Trim());
 
@@ -267,6 +280,77 @@ namespace SewaRuanganUmy2
         private void btnTutup_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void btnImportExcel_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                Filter = "Excel Files|*.xls;*.xlsx",
+                Title = "Pilih File Excel"
+            };
+
+            if (ofd.ShowDialog() == DialogResult.OK)
+            {
+                using (var stream = File.Open(ofd.FileName, FileMode.Open, FileAccess.Read))
+                {
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    {
+                            var result = reader.AsDataSet(new ExcelDataSetConfiguration()
+                            {
+                                ConfigureDataTable = (_) => new ExcelDataTableConfiguration() { UseHeaderRow = true }
+                        });
+
+                        DataTable dt = result.Tables[0];
+                        dgvPelanggan.DataSource = dt;
+
+                        DialogResult konfirmasi = MessageBox.Show("Apakah ingin menyimpan semua data ini ke database?", "Konfirmasi Import", MessageBoxButtons.YesNo);
+                        if (konfirmasi == DialogResult.Yes)
+                        {
+                            ImportDataToDatabase(dt);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void ImportDataToDatabase(DataTable dt)
+        {
+            using (SqlConnection conn = new SqlConnection(connectionString))
+            {
+                conn.Open();
+                foreach (DataRow row in dt.Rows)
+                {
+                    try
+                    {
+                        string nama = row["nama"].ToString().Trim();
+                        string no_hp = row["no_hp"].ToString().Trim();
+                        string email = row["email"].ToString().Trim();
+                        string alamat = row["alamat"].ToString().Trim();
+
+                        if (string.IsNullOrWhiteSpace(nama) || string.IsNullOrWhiteSpace(no_hp) ||
+                            string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(alamat))
+                            continue;
+
+                        using (SqlCommand cmd = new SqlCommand("sp_InsertPelanggan", conn))
+                        {
+                            cmd.CommandType = CommandType.StoredProcedure;
+                            cmd.Parameters.AddWithValue("@nama", nama);
+                            cmd.Parameters.AddWithValue("@no_hp", no_hp);
+                            cmd.Parameters.AddWithValue("@email", email);
+                            cmd.Parameters.AddWithValue("@alamat", alamat);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Gagal menyimpan salah satu data: " + ex.Message);
+                    }
+                }
+
+                MessageBox.Show("Import selesai.");
+                LoadData();
+            }
         }
     }
 }

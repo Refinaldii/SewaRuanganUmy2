@@ -10,8 +10,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ExcelDataReader;
-using System.Data;
-using System.IO;
 
 
 
@@ -21,7 +19,7 @@ namespace SewaRuanganUmy2
 {
     public partial class FormPaket : Form
     {
-        private string connectionString = "Data Source=YUUTA\\YUUTA;Initial Catalog=SewaRuanganUMY;Integrated Security=True";
+        private string connectionString = Koneksi.GetConnectionString();
 
         private Form1 _form1;
 

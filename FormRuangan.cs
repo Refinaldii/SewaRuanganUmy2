@@ -7,11 +7,12 @@ namespace SewaRuanganUmy2
 {
     public partial class FormRuangan : Form
     {
-        private string connectionString = "Data Source=YUUTA\\YUUTA;Initial Catalog=SewaRuanganUMY;Integrated Security=True";
+        private string connectionString;
 
         public FormRuangan()
         {
             InitializeComponent();
+            connectionString = Koneksi.GetConnectionString();
             LoadData();
         }
 

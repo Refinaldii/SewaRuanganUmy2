@@ -8,21 +8,31 @@ namespace SewaRuanganUmy2
 {
     public partial class FormDashboard : Form
     {
-        private string connectionString = "Data Source=YUUTA\\YUUTA;Initial Catalog=SewaRuanganUmy;Integrated Security=True";
+       
+        private string connectionString;
+
         private int tahunDefault;
 
         public FormDashboard()
         {
             InitializeComponent();
-            tahunDefault = tahun;
+            connectionString = Koneksi.GetConnectionString();
+
+            cmbTahun.SelectedIndexChanged += cmbTahun_SelectedIndexChanged;
+            this.Load += FormDashboard_Load;
         }
+
 
         private void FormDashboard_Load(object sender, EventArgs e)
         {
             LoadTahunReservasi();
 
             if (cmbTahun.Items.Count > 0)
+            {
                 cmbTahun.SelectedIndex = 0;
+                int tahun = Convert.ToInt32(cmbTahun.SelectedItem);
+                TampilkanChartReservasi(tahun);
+            }
         }
 
         private void LoadTahunReservasi()

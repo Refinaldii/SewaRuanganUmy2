@@ -106,7 +106,7 @@
             this.label1.Size = new System.Drawing.Size(140, 26);
             this.label1.TabIndex = 6;
             this.label1.Text = " Sewa Ruangan Umy";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
+            
             // 
             // btnReport
             // 

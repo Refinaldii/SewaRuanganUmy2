@@ -43,6 +43,7 @@
             this.dgvPelanggan = new System.Windows.Forms.DataGridView();
             this.button4 = new System.Windows.Forms.Button();
             this.btnAnalisis = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPelanggan)).BeginInit();
             this.SuspendLayout();
@@ -191,7 +192,7 @@
             // 
             // btnAnalisis
             // 
-            this.btnAnalisis.Location = new System.Drawing.Point(655, 226);
+            this.btnAnalisis.Location = new System.Drawing.Point(695, 227);
             this.btnAnalisis.Name = "btnAnalisis";
             this.btnAnalisis.Size = new System.Drawing.Size(93, 43);
             this.btnAnalisis.TabIndex = 6;
@@ -199,11 +200,22 @@
             this.btnAnalisis.UseVisualStyleBackColor = true;
             this.btnAnalisis.Click += new System.EventHandler(this.btnAnalisis_Click);
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(584, 227);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(93, 43);
+            this.button5.TabIndex = 7;
+            this.button5.Text = "Import";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.btnImportExcel_Click);
+            // 
             // FormPelanggan
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.btnAnalisis);
             this.Controls.Add(this.dgvPelanggan);
             this.Controls.Add(this.button4);
@@ -238,5 +250,6 @@
         private System.Windows.Forms.DataGridView dgvPelanggan;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button btnAnalisis;
+        private System.Windows.Forms.Button button5;
     }
 }

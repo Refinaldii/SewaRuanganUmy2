@@ -15,7 +15,6 @@ namespace SewaRuanganUmy2
     public partial class FormReservasi : Form
     {
         private string connectionString = Koneksi.GetConnectionString();
-
         private Form1 _form1;
 
         public FormReservasi(Form1 form1)
@@ -63,45 +62,71 @@ namespace SewaRuanganUmy2
             }
 
             using (SqlConnection conn = new SqlConnection(connectionString))
-            using (SqlCommand cmd = new SqlCommand("sp_InsertReservasi", conn))
             {
-                cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@id_pelanggan", cmbPelanggan.SelectedValue);
-                cmd.Parameters.AddWithValue("@id_paket", cmbPaket.SelectedValue);
-                cmd.Parameters.AddWithValue("@id_ruangan", cmbRuangan.SelectedValue);
-                cmd.Parameters.AddWithValue("@tanggal_reservasi", tanggalReservasi);
-                cmd.Parameters.AddWithValue("@jam_mulai", jamMulai);
-                cmd.Parameters.AddWithValue("@jam_selesai", jamSelesai);
-                cmd.Parameters.AddWithValue("@status", cmbStatus.SelectedItem.ToString());
+                conn.Open();
+                using (SqlCommand checkCmd = new SqlCommand(@"
+                    SELECT COUNT(*) FROM Reservasi
+                    WHERE id_ruangan = @id_ruangan
+                    AND tanggal_reservasi = @tanggal
+                    AND (
+                        (@jam_mulai BETWEEN jam_mulai AND jam_selesai)
+                        OR (@jam_selesai BETWEEN jam_mulai AND jam_selesai)
+                        OR (jam_mulai BETWEEN @jam_mulai AND @jam_selesai)
+                    )
+                ", conn))
+                {
+                    checkCmd.Parameters.AddWithValue("@id_ruangan", cmbRuangan.SelectedValue);
+                    checkCmd.Parameters.AddWithValue("@tanggal", tanggalReservasi);
+                    checkCmd.Parameters.AddWithValue("@jam_mulai", jamMulai);
+                    checkCmd.Parameters.AddWithValue("@jam_selesai", jamSelesai);
 
-                try
-                {
-                    conn.Open();
-                    int result = cmd.ExecuteNonQuery();
-                    if (result > 0)
+                    int count = (int)checkCmd.ExecuteScalar();
+                    if (count > 0)
                     {
-                        MessageBox.Show("Data reservasi berhasil ditambahkan.");
-                        LoadData();
-                    }
-                    else
-                    {
-                        MessageBox.Show("Gagal menambahkan data.");
+                        MessageBox.Show("Ruangan sudah terisi pada waktu tersebut!", "Jadwal Bentrok", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
                     }
                 }
-                catch (SqlException ex)
+
+                using (SqlCommand cmd = new SqlCommand("sp_InsertReservasi", conn))
                 {
-                    if (ex.Message.Contains("UNIQUE KEY") || ex.Message.Contains("duplicate"))
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@id_pelanggan", cmbPelanggan.SelectedValue);
+                    cmd.Parameters.AddWithValue("@id_paket", cmbPaket.SelectedValue);
+                    cmd.Parameters.AddWithValue("@id_ruangan", cmbRuangan.SelectedValue);
+                    cmd.Parameters.AddWithValue("@tanggal_reservasi", tanggalReservasi);
+                    cmd.Parameters.AddWithValue("@jam_mulai", jamMulai);
+                    cmd.Parameters.AddWithValue("@jam_selesai", jamSelesai);
+                    cmd.Parameters.AddWithValue("@status", cmbStatus.SelectedItem.ToString());
+
+                    try
                     {
-                        MessageBox.Show("Reservasi gagal: data ruangan/paket mungkin sudah terpakai pada waktu tersebut.", "Error Duplikat", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        int result = cmd.ExecuteNonQuery();
+                        if (result > 0)
+                        {
+                            MessageBox.Show("Data reservasi berhasil ditambahkan.");
+                            LoadData();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Gagal menambahkan data.");
+                        }
                     }
-                    else
+                    catch (SqlException ex)
                     {
-                        MessageBox.Show("Kesalahan database: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        if (ex.Message.Contains("UNIQUE KEY") || ex.Message.Contains("duplicate"))
+                        {
+                            MessageBox.Show("Reservasi gagal: data ruangan/paket mungkin sudah terpakai pada waktu tersebut.", "Error Duplikat", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Kesalahan database: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
                     }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Kesalahan sistem: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Kesalahan sistem: " + ex.Message, "Kesalahan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
             }
         }
